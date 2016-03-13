@@ -7,6 +7,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport =  require('passport');
 var jwt = require('jwt-simple');
+var events = require('events');
+var redis = require('redis');
+var client = redis.createClient();
+var ee = new events.EventEmitter();
+ee.on('test',function(){
+   
+      console.log('willy wonker');
+});
 
 
 /* File Calls */
@@ -18,11 +26,41 @@ var users = require('./routes/users')();
 var auth =  require('./routes/auth.js')(passport);
 var posts =  require('./routes/posts.js')();
 var comments =  require('./routes/comments.js')();
-var freinds = require('./routes/freinds.js')();
+
 
 
 var app = express();
+var io = require('socket.io').listen(app.listen(4000));
+io.sockets.on('connection',function(socket){
+      //stores every socket-client to redis
+      socket.on('store-to-redis',function(data){
+            var user = data.id;
+            client.set('user-'+user,socket.id);
+           
+      });
+});
+/*io.sockets.on('connection', function (socket) {
+      
+      console.log(socket.id);
+      socket.on('touch',function(data){
+          console.log(data);
+          //io.emit('tty',"A new fren request");
+          //socket.broadcast.emit('tty', "this is a broadcast execpt to the sender");
+          //socket.emit('tty',"this is a test");
+          //socket.broadcast.to("/#RS8jwOmdquo-j8RBAAAB").emit('tty', 'for your eyes only');
+      });
+      socket.on('make',function(data,fn){
+          console.log(data);
+          //fn("ticker or treat");
+          console.log(fn);
+      });
+      //io.sockets.emit('pizza','peppperoni');
+      
+});*/
 
+
+
+var freinds = require('./routes/freinds.js')(ee,io);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
