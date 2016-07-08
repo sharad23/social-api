@@ -1,0 +1,15 @@
+<script src="https://cdn.socket.io/socket.io-1.4.4.js"></script>
+<script>
+      var socket = io('http://localhost:4000');
+      var data = {};
+      data.id = "56e023358ba6aa590eecef61"; 
+      data.name = "sharad"
+      socket.emit('store-to-redis',data);
+      socket.on('comment',function(data){
+           console.log(data);
+      });
+      socket.on('joining',function(data){
+           console.log(data);
+      });
+      
+</script>

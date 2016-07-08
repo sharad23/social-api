@@ -28,7 +28,13 @@ module.exports = function(ee,io){
                                      res.json(data);
                                 });
                                 client.get('user-'+toUser, function(err, socketid) {
-                                    io.to(socketid).emit('fren-req',"A new freind request from "+req.user.login_info.username);
+                                    //io.to(socketid).emit('fren-req',"A new freind request from "+req.user.login_info.username);
+                                    //get the frenReq id
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                    console.log(socketid);
+                                    io.to(socketid).emit('fren-req',frenReq);
                                 });
                                ee.emit('test');
                            }
@@ -37,6 +43,7 @@ module.exports = function(ee,io){
                                res.json({ message: "Fren request has been already send"});
                            }
                        }); 
+          
           
     });
     router.get('/respondRequest/:id/:res',function(req,res,next){
